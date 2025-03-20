@@ -1,3 +1,6 @@
+<svelte:head>
+    <title>Projetos</title>
+</svelte:head>
 <h1>Projetos</h1>
     <p>Não tem nenhum projeto aqui ainda. Se quiser ver algo legal, veja <a href = "https://pedrotokar.github.io/AEDV-A2/" target="_blank">meu trabalho de A2 de AEDV</a> :D</p>
       <div class = "projects">
