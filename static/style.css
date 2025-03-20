@@ -1,0 +1,91 @@
+:root{
+	--accent-strong: #d11dbf;
+	--accent-light: #ffa4fa
+}
+
+body {
+	/* Set line height to 1.5 times the font size
+	   and use the OS’s UI font as the website font
+	 */
+	font: 100%/1.5 system-ui;
+	max-width: 100ch;
+	margin-inline: auto /*max(1em, (100% - 150ch) / 2)*/;
+	padding: 1ch;
+}
+
+nav {
+	display: flex;
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-bottom-color: #8c8c8c;
+}
+
+nav a{
+	flex: 1;
+	text-decoration: none;
+	color: inherit;
+	text-align: center;
+	padding: 0.5em;
+}
+
+nav .current{
+	border-bottom-width: 0.6ch;
+	border-bottom-style: solid;
+	border-bottom-color: #676767;
+}
+
+nav a:hover{
+	border-bottom-width: 0.6ch;
+	border-bottom-style: solid;
+	border-bottom-color: var(--accent-strong)/*#676767*/;
+	background-color: var(--accent-light)
+}
+/*
+input,textarea,button {
+	font: inherit;
+}
+
+label, input, textarea, button {
+	display: block;
+}
+
+input, textarea, button {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+label {
+	margin-block: 1rem;
+}*/
+form{
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 1em;
+}
+
+form label{
+	display: grid;
+	grid-template-columns: subgrid;
+}
+
+#button, label{
+	grid-column: 1 / -1;
+}
+
+img{
+	max-width: 100%
+}
+
+.projects {
+	display:grid;
+	grid-template-columns : repeat(auto-fill, minmax(15em, 1fr));
+	min-width: 15em;
+	max-width: 1fr;
+}
+
+article {
+	margin:10px;
+	display: grid;
+	grid-template-rows: subgrid;
+	grid-row: span 3;
+}

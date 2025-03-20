@@ -1,2 +1,5 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h1> Pedro Tokar </h1>
+
+<p> I am a Data Science student at FGV EMAp. I am also a big fan of One Piece and Rock Music!</p>
+
+<img src="images/onepiece3.png" alt="One Piece">
