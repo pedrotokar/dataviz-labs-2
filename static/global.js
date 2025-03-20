@@ -10,10 +10,10 @@ function $$ (selector, context = document) {
 const ARE_WE_HOME = document.documentElement.classList.contains("home");
 
 let pages = [
-    {url: "", title: "Home"},
-    {url: "projects/", title: "Projects"},
-    {url: "CV/", title: "CV"},
-    {url: "contact/", title: "Contact"},
+    {url: ".", title: "Home"},
+    {url: "projects", title: "Projects"},
+    {url: "CV", title: "CV"},
+    {url: "contact", title: "Contact"},
     {url: "https://github.com/pedrotokar", title: "GitHub"}
     // add the rest of your pages here
 ];
