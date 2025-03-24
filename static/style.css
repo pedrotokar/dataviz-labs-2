@@ -89,3 +89,22 @@ article {
 	grid-template-rows: subgrid;
 	grid-row: span 3;
 }
+
+
+.curriculo-nome {
+	font-size: 40px;
+	text-align: center
+}
+
+.curriculo-topo {
+	display: flex;
+	justify-content: space-between;
+}
+
+h3.formacao-academica {
+	font-size: 25px;
+	border-bottom-color: black;
+	border-bottom-style: solid;
+	border-bottom-width: 2px;
+	background-color: lightblue
+}

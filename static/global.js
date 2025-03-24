@@ -11,9 +11,9 @@ function $$ (selector, context = document) {
 
 let pages = [
     {url: ".", title: "Home"},
-    {url: "projects", title: "Projects"},
-    {url: "CV", title: "CV"},
-    {url: "contact", title: "Contact"},
+    {url: "../projects", title: "Projects"},
+    {url: "../CV", title: "CV"},
+    {url: "../contact", title: "Contact"},
     {url: "https://github.com/pedrotokar", title: "GitHub"}
     // add the rest of your pages here
 ];
