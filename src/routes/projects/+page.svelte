@@ -1,10 +1,23 @@
+<script>
+  import projects from "$lib/projects.json";
+</script>
+
 <svelte:head>
     <title>Projetos</title>
 </svelte:head>
 <h1>Projetos</h1>
-    <p>Não tem nenhum projeto aqui ainda. Se quiser ver algo legal, veja <a href = "https://pedrotokar.github.io/AEDV-A2/" target="_blank">meu trabalho de A2 de AEDV</a> :D</p>
+
+    <p>Contagem: {projects.length}</p>
       <div class = "projects">
+        {#each projects as p}
         <article>
+            <h2>{p.title}</h2>
+            <img src="{p.image}" alt="" />
+            <p>{p.description}</p>
+            <p><a href = "{p.link}" target="_blank">link</a></p>
+        </article>
+        {/each}
+        <!--<article>
             <h2>Lorem ipsum dolor sit.</h2>
             <img src="../images/onepiece.jpg" alt="">
             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum, libero, reprehenderit architecto officiis ullam voluptate cumque dignissimos hic cupiditate quod minima ut ab sequi! Numquam, sint tempora est vitae aspernatur.</p>
@@ -33,5 +46,5 @@
             <h2>Aspernatur explicabo quasi ea.</h2>
             <img src="../images/onepiece.jpg" alt="">
             <p>Odio, architecto, hic dolores repellendus assumenda sed dicta quisquam quaerat eius quos alias nulla suscipit nostrum iure ut ipsa amet labore iste numquam fugiat nesciunt! Ratione architecto beatae porro maiores.</p>
-        </article>
+        </article>-->
     </div>
