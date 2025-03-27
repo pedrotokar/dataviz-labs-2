@@ -13,33 +13,6 @@ body {
 	padding: 1ch;
 }
 
-nav {
-	display: flex;
-	border-bottom-width: 2px;
-	border-bottom-style: solid;
-	border-bottom-color: #8c8c8c;
-}
-
-nav a{
-	flex: 1;
-	text-decoration: none;
-	color: inherit;
-	text-align: center;
-	padding: 0.5em;
-}
-
-nav .current{
-	border-bottom-width: 0.6ch;
-	border-bottom-style: solid;
-	border-bottom-color: #676767;
-}
-
-nav a:hover{
-	border-bottom-width: 0.6ch;
-	border-bottom-style: solid;
-	border-bottom-color: var(--accent-strong)/*#676767*/;
-	background-color: var(--accent-light)
-}
 /*
 input,textarea,button {
 	font: inherit;
