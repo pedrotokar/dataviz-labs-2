@@ -4,6 +4,7 @@ let pages = [
     { url: "/projects", title: "Projetos" },
     { url: "/contact", title: "Contato" },
     { url: "/CV", title: "CV" },
+    { url: "/meta", title: "Meta"},
     {url: "https://github.com/pedrotokar", title: "GitHub"}
 ];
 import {base} from "$app/paths";
