@@ -185,7 +185,7 @@ $: {
     <g transform = "translate(0, {usableArea.bottom})" bind:this={xAxis} />
     <g transform = "translate({usableArea.left}, 0)" bind:this={yAxis} />
     <g class = "dots">
-        {#each filteredCommits as commit, index}
+        {#each filteredCommits as commit, index (commit.id)}
         <circle
             on:mouseenter = {evt => dotInteraction(index, evt)}
             on:mouseleave = {evt => dotInteraction(index, evt)}
