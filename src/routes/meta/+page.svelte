@@ -57,14 +57,33 @@ let usableArea = {
 usableArea.width = usableArea.right - usableArea.left;
 usableArea.height = usableArea.bottom - usableArea.top;
 
+
 //Eixos
 $: minDate = d3.min(commits.map(d => d.date));
 $: maxDate = d3.max(commits.map(d => d.date));
 $: maxDatePlusOne = new Date(maxDate);
 $: maxDatePlusOne.setDate(maxDatePlusOne.getDate() + 1);
 
+//Filtro de tempo
+let commitProgress = 100;
+let timeScale, commitMaxTime, filteredCommits;
+$: {
+    timeScale = d3.scaleTime().domain([minDate,maxDatePlusOne]).range([0,100]);
+    commitMaxTime = timeScale.invert(commitProgress);
+    filteredCommits = commits.filter(
+        commit => commit.datetime < commitMaxTime
+    );
+    console.log(filteredCommits);
+}
+
+//Refazendo para filtered commits
+$: filteredMinDate = d3.min(filteredCommits.map(d => d.date));
+$: filteredMaxDate = d3.max(filteredCommits.map(d => d.date));
+$: filteredMaxDatePlusOne = new Date(filteredMaxDate);
+$: filteredMaxDatePlusOne.setDate(filteredMaxDatePlusOne.getDate() + 1);
+
 $: xScale = d3.scaleTime()
-              .domain([minDate, maxDatePlusOne])
+              .domain([filteredMinDate, filteredMaxDatePlusOne])
               .range([usableArea.left, usableArea.right])
               .nice();
 
@@ -93,7 +112,7 @@ $: {
 
 //Tooltips *e* seleção
 let hoveredIndex = -1;
-$: hoveredCommit = commits[hoveredIndex] ?? hoveredCommit ?? {};
+$: hoveredCommit = filteredCommits[hoveredIndex] ?? hoveredCommit ?? {};
 let cursor = {x: 0, y: 0};
 let commitTooltip;
 let tooltipPosition = {x: 0, y: 0};
@@ -116,7 +135,7 @@ async function dotInteraction (index, evt){
         hoveredIndex = -1;
     }
     else if (evt.type == "click") {
-        let commit = commits[index];
+        let commit = filteredCommits[index];
         if (!clickedCommits.includes(commit)) {
             //Adiciona o commit
             clickedCommits = [...clickedCommits, commit];
@@ -137,7 +156,7 @@ $: rScale = d3.scaleSqrt()
 //Gráfico de barras
 let allTypes, selectedLines, selectedCounts, languageBreakdown;
 $: {
-    selectedLines = (clickedCommits.length > 0 ? clickedCommits : commits).flatMap(d => d.lines);
+    selectedLines = (clickedCommits.length > 0 ? clickedCommits : filteredCommits).flatMap(d => d.lines);
     allTypes = Array.from(new Set(dados.map(d => d.type)));
     selectedCounts = d3.rollup(
         selectedLines,
@@ -146,19 +165,34 @@ $: {
     );
     languageBreakdown = allTypes.map(type => [type, selectedCounts.get(type) || 0]);
 }
+
 </script>
 
 <h1>Meta</h1>
 <p>Página destinada a ter informações da base de código desse site</p>
-<p>Linhas de código: {dados.length}</p>
+
 <Stats dados = {dados}/>
+
+<h2>Sobre os commits</h2>
+
+
+<div class="slider-container">
+    <div class="slider">
+        <label for="slider">Show commits until:</label>
+        <input type="range" id="slider" name="slider" min=0 max=100 bind:value={commitProgress}/>
+        <time class="time-label">{commitMaxTime.toLocaleString()}</time>
+    </div>
+</div>
+
+<Bar data={languageBreakdown} width={width} />
+
 <svg viewBox = "0 0 {width} {height}">
     <g class = "gridlines" transform = "translate({usableArea.left}, 0)" bind:this = {yAxisGridLines}/>
     <g class = "gridlinesX" transform = "translate(0, {usableArea.bottom})" bind:this = {xAxisGridLines}/>
     <g transform = "translate(0, {usableArea.bottom})" bind:this={xAxis} />
     <g transform = "translate({usableArea.left}, 0)" bind:this={yAxis} />
     <g class = "dots">
-        {#each commits as commit, index}
+        {#each filteredCommits as commit, index}
         <circle
             on:mouseenter = {evt => dotInteraction(index, evt)}
             on:mouseleave = {evt => dotInteraction(index, evt)}
@@ -191,7 +225,6 @@ $: {
     <dd>{ hoveredCommit.time }</dd>
 </dl>
 
-<Bar data={languageBreakdown} width={width} />
 
 <style>
 svg {
@@ -203,6 +236,9 @@ circle {
     transform-box: fill-box;
     &:hover {
         transform: scale(1.5);
+    }
+    @starting-style {
+        r: 0;
     }
 }
 circle.selected {
@@ -248,5 +284,20 @@ circle.selected {
     top: 1em;
     left: 1em;
 }
+
+.slider-container{
+	display:grid;
+}
+.slider{
+	display: flex;
+}
+#slider{
+	flex:1;
+}
+.time-label{
+	font-size: 0.75em;
+	text-align: right;
+}
+
 
 </style>
