@@ -29,7 +29,7 @@ onMount(async () => {
             url: "https://github.com/pedrotokar/dataviz-labs-2" + commit,
             author, date, time, timezone, datetime,
             hourFrac: datetime.getHours() + datetime.getMinutes() / 60,
-            totalLInes: lines.length
+            totalLines: lines.length
         };
         //Isso é para prevenir que as linhas apareçam em uma json stringfy da vida.
         Object.defineProperty(ret, "lines", {
@@ -40,6 +40,7 @@ onMount(async () => {
         });
         return ret;
     });
+    commits = d3.sort(commits, d => -d.totalLines);
 })
 
 //Definição de espaço
@@ -111,6 +112,12 @@ async function dotInteraction (index, evt){
         hoveredIndex = -1;
     }
 }
+
+//Tamanho dos circulos
+let rScale;
+$: rScale = d3.scaleSqrt()
+                .domain(d3.extent(commits.map(d=>d.totalLines)))
+                .range([3, 30]);
 </script>
 
 <h1>Meta</h1>
@@ -129,8 +136,9 @@ async function dotInteraction (index, evt){
             on:mouseleave = {evt => dotInteraction(index, evt)}
             cx = {xScale(commit.datetime)}
             cy = {yScale(commit.hourFrac)}
-            r = "5"
+            r = {rScale(commit.totalLines)}
             fill = "purple"
+            fill-opacity = "0.5"
         />
         {/each}
     </g>
