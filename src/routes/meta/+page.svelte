@@ -93,9 +93,19 @@ let hoveredIndex = -1;
 $: hoveredCommit = commits[hoveredIndex] ?? hoveredCommit ?? {};
 let cursor = {x: 0, y: 0};
 let commitTooltip;
-function dotInteraction (index, evt){
+let tooltipPosition = {x: 0, y: 0};
+async function dotInteraction (index, evt){
+    let hoveredDot = evt.target;
     if (evt.type == "mouseenter") {
+
         hoveredIndex = index; cursor = {x: evt.x, y: evt.y};
+         tooltipPosition = await computePosition(hoveredDot, commitTooltip, {
+            strategy: "fixed", // because we use position: fixed
+            middleware: [
+                offset(5), // spacing from tooltip to dot
+                autoPlacement() // see https://floating-ui.com/docs/autoplacement
+            ],
+        });
     }
     else if (evt.type == "mouseleave") {
         hoveredIndex = -1;
@@ -128,7 +138,7 @@ function dotInteraction (index, evt){
 
 <dl class = "info tooltip"
     hidden = {hoveredIndex === -1}
-    style = "top: {cursor.y}px; left: {cursor.x}px"
+    style = "top: {tooltipPosition.y}px; left: {tooltipPosition.x}px"
     bind:this = {commitTooltip}>
     <dt>Commit</dt>
     <dd><a href="{ hoveredCommit.url }" target="_blank">{ hoveredCommit.id }</a></dd>
