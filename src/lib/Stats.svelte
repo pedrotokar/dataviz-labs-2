@@ -19,7 +19,7 @@
 dl{
   display: grid;
   grid-template-columns: auto;
-  }
+}
 dt{
   grid-row: 1;
   font-family: inherit;
@@ -30,7 +30,7 @@ dt{
 dd{
   font-family: inherit;
   font-weight: bold;
-  }
+}
 section{
   border-width:0.15em;
   border-style:solid;
