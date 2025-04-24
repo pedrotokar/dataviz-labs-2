@@ -15,7 +15,7 @@ let dados = [];
 let commits = [];
 
 onMount(async () => {
-    dados = await d3.csv("/loc.csv", row => ({
+    dados = await d3.csv("./loc.csv", row => ({
         ...row,
         line: Number(row.line),
         depth: Number(row.depth),
@@ -176,13 +176,6 @@ $: {
 <h2>Sobre os commits</h2>
 
 
-<div class="slider-container">
-    <div class="slider">
-        <label for="slider">Show commits until:</label>
-        <input type="range" id="slider" name="slider" min=0 max=100 bind:value={commitProgress}/>
-        <time class="time-label">{commitMaxTime.toLocaleString()}</time>
-    </div>
-</div>
 
 <Bar data={languageBreakdown} width={width} />
 
@@ -224,6 +217,15 @@ $: {
     <dt>Time</dt>
     <dd>{ hoveredCommit.time }</dd>
 </dl>
+
+<div class="slider-container">
+    <div class="slider">
+        <label for="slider">Show commits until:</label>
+        <input type="range" id="slider" name="slider" min=0 max=100 bind:value={commitProgress}/>
+        <time class="time-label">{commitMaxTime.toLocaleString()}</time>
+    </div>
+</div>
+
 
 
 <style>
