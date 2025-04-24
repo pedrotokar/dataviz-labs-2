@@ -171,7 +171,7 @@ $: {
 <h1>Meta</h1>
 <p>Página destinada a ter informações da base de código desse site</p>
 
-<Stats dados = {dados}/>
+<Stats dados = {dados} commitMaxTime = {commitMaxTime}/>
 
 <h2>Sobre os commits</h2>
 
