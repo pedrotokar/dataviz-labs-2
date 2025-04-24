@@ -2,6 +2,8 @@
 import * as d3 from "d3";
 import { onMount } from "svelte";
 import Stats from "$lib/Stats.svelte"; //Componente de stats
+//import Bar from "$lib/Bar.svelte"; //Componente do gráfico de barras
+
 import {
     computePosition,
     autoPlacement,
@@ -89,12 +91,14 @@ $: {
     );
 }
 
-//Tooltips
+//Tooltips *e* seleção
 let hoveredIndex = -1;
 $: hoveredCommit = commits[hoveredIndex] ?? hoveredCommit ?? {};
 let cursor = {x: 0, y: 0};
 let commitTooltip;
 let tooltipPosition = {x: 0, y: 0};
+
+let clickedCommits = [];
 async function dotInteraction (index, evt){
     let hoveredDot = evt.target;
     if (evt.type == "mouseenter") {
@@ -111,6 +115,17 @@ async function dotInteraction (index, evt){
     else if (evt.type == "mouseleave") {
         hoveredIndex = -1;
     }
+    else if (evt.type == "click") {
+        let commit = commits[index];
+        if (!clickedCommits.includes(commit)) {
+            //Adiciona o commit
+            clickedCommits = [...clickedCommits, commit];
+        } else {
+            //Remove o commit
+            clickedCommits = clickedCommits.filter(c => c !== commit);
+        }
+        console.log(clickedCommits);
+    }
 }
 
 //Tamanho dos circulos
@@ -118,6 +133,10 @@ let rScale;
 $: rScale = d3.scaleSqrt()
                 .domain(d3.extent(commits.map(d=>d.totalLines)))
                 .range([3, 30]);
+
+//Gráfico de barras
+let allTypes;
+$: allTypes = Array.from(new Set(dados.map(d => d.type)));
 </script>
 
 <h1>Meta</h1>
@@ -134,6 +153,8 @@ $: rScale = d3.scaleSqrt()
         <circle
             on:mouseenter = {evt => dotInteraction(index, evt)}
             on:mouseleave = {evt => dotInteraction(index, evt)}
+            on:click = {evt => dotInteraction(index, evt)}
+            class:selected = {clickedCommits.includes(commit)}
             cx = {xScale(commit.datetime)}
             cy = {yScale(commit.hourFrac)}
             r = {rScale(commit.totalLines)}
@@ -173,6 +194,9 @@ circle {
     &:hover {
         transform: scale(1.5);
     }
+}
+circle.selected {
+    fill: red;
 }
 .gridlines {
     stroke-opacity: .2;
