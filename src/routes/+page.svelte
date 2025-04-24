@@ -1,6 +1,20 @@
 <script>
   import projects from "$lib/projects.json";
   import Project from "$lib/Project.svelte";
+  import { onMount } from "svelte";
+  let dados = null;
+  let loading = true;
+  let error = null;
+
+  onMount(async () => {
+    try {
+      const response = await fetch("https://api.github.com/users/pedrotokar");
+      dados = await response.json();
+    } catch (err) {
+      error = err;
+    }
+    loading = false;
+  });
 </script>
 
 <svelte:head>
@@ -14,11 +28,12 @@
 <img src="images/onepiece3.png" alt="One Piece">
 
 <h2> Estatísticas do GitHub </h2>
-{#await fetch("https://api.github.com/users/pedrotokar")}
-    <p> Carregando </p>
-{:then resposta} {#await resposta.json()}
-    <p> Lendo JSON </p>
-{:then dados}
+{#if loading}
+    <p>Guenta aí que tá carregando...</p>
+{:else if error}
+    <p class = "error">Deu xabu: {error.message}</p>
+{:else}
+  <section>
     <dl>
         <dt>Seguidores</dt>
         <dd>{dados.followers}</dd>
@@ -27,12 +42,8 @@
         <dt>Repositórios públicos</dt>
         <dd>{dados.public_repos}</dd>
       </dl>
-<!--     <p> Informações: {JSON.stringify(dados)} </p> -->
-{:catch error}
-    <p class = "error">Deu xabu: {erro.message}</p>
-{/await} {:catch error}
-    <p class = "error">Deu xabu: {erro.message}</p>
-{/await}
+    </section>
+{/if}
 
 <h2> Latest projects </h2>
 <div class = "projects">
@@ -43,26 +54,25 @@
 
 <style>
 dl{
-    display: grid;
-    grid-template-columns: auto;
+  display: grid;
+  grid-template-columns: auto;
   }
-  dt{
-    grid-row: 1;
-    font-family: inherit;
-    font-weight: bold;
-    color: var(--border-gray);
-    text-transform: uppercase;
+dt{
+  grid-row: 1;
+  font-family: inherit;
+  font-weight: bold;
+  color: #bbbbbb;
+  text-transform: uppercase;
+}
+dd{
+  font-family: inherit;
+  font-weight: bold;
   }
-  dd{
-    font-family: inherit;
-    font-weight: bold;
-  }
-  section{
-    border-width:0.15em;
-  	border-style:solid;
-	  border-color:var(--border-gray);
-    padding-left: 1em;
-    padding-right: 1em;
-  }
-
+section{
+  border-width:0.15em;
+  border-style:solid;
+  border-color: #d9d9d9;
+  padding-left: 1em;
+  padding-right: 1em;
+}
 </style>
