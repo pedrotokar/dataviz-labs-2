@@ -2,7 +2,7 @@
 import * as d3 from "d3";
 import { onMount } from "svelte";
 import Stats from "$lib/Stats.svelte"; //Componente de stats
-//import Bar from "$lib/Bar.svelte"; //Componente do gráfico de barras
+import Bar from "$lib/Bar.svelte"; //Componente do gráfico de barras
 
 import {
     computePosition,
@@ -135,8 +135,17 @@ $: rScale = d3.scaleSqrt()
                 .range([3, 30]);
 
 //Gráfico de barras
-let allTypes;
-$: allTypes = Array.from(new Set(dados.map(d => d.type)));
+let allTypes, selectedLines, selectedCounts, languageBreakdown;
+$: {
+    selectedLines = (clickedCommits.length > 0 ? clickedCommits : commits).flatMap(d => d.lines);
+    allTypes = Array.from(new Set(dados.map(d => d.type)));
+    selectedCounts = d3.rollup(
+        selectedLines,
+        v => v.length,
+        d => d.type
+    );
+    languageBreakdown = allTypes.map(type => [type, selectedCounts.get(type) || 0]);
+}
 </script>
 
 <h1>Meta</h1>
@@ -182,6 +191,7 @@ $: allTypes = Array.from(new Set(dados.map(d => d.type)));
     <dd>{ hoveredCommit.time }</dd>
 </dl>
 
+<Bar data={languageBreakdown} width={width} />
 
 <style>
 svg {
