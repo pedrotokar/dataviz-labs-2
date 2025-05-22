@@ -1,8 +1,10 @@
 <script>
 import * as d3 from "d3";
 import { onMount } from "svelte";
+import Scrolly from "svelte-scrolly";
 import Stats from "$lib/Stats.svelte"; //Componente de stats
 import Bar from "$lib/Bar.svelte"; //Componente do gráfico de barras
+import FileLines from "$lib/FileLines.svelte"; //Componente de stats
 
 import {
     computePosition,
@@ -66,14 +68,16 @@ $: maxDatePlusOne.setDate(maxDatePlusOne.getDate() + 1);
 
 //Filtro de tempo
 let commitProgress = 100;
-let timeScale, commitMaxTime, filteredCommits;
+let timeScale, commitMaxTime, filteredCommits, filteredLines;
 $: {
     timeScale = d3.scaleTime().domain([minDate,maxDatePlusOne]).range([0,100]);
     commitMaxTime = timeScale.invert(commitProgress);
     filteredCommits = commits.filter(
         commit => commit.datetime < commitMaxTime
     );
-    console.log(filteredCommits);
+    filteredLines = dados.filter(
+        commit => commit.datetime < commitMaxTime
+    );
 }
 
 //Refazendo para filtered commits
@@ -171,35 +175,60 @@ $: {
 <h1>Meta</h1>
 <p>Página destinada a ter informações da base de código desse site</p>
 
+<div class="slider-container">
+    <div class="slider">
+        <label for="slider">Mostrar commits até:</label>
+        <input type="range" id="slider" name="slider" min=0 max=100 bind:value={commitProgress}/>
+        <time class="time-label">{commitMaxTime.toLocaleString()}</time>
+    </div>
+</div>
+
+<FileLines dados = {filteredLines} width={width} commitMaxTime = {commitMaxTime}/>
+
 <Stats dados = {dados} commitMaxTime = {commitMaxTime}/>
 
 <h2>Sobre os commits</h2>
 
+<Scrolly bind:progress={ commitProgress }>
+    {#each commits.sort(commit => commit.datetime) as commit, index}
+    <p>
+        Em {commit.datetime.toLocaleString("pt-BR", {dateStyle: "full", timeStyle: "short"})},
+        {#if index === 0}
+            meu primeiro commit foi foi feito:
+        {:else}
+            eu fiz outro commit:
+        {/if}
+        <a href="{commit.url}" target="_blank">aqui</a>.
+    </p>
+    {/each}
+	<svelte:fragment slot="viz">
+        <svg viewBox = "0 0 {width} {height}">
+            <g class = "gridlines" transform = "translate({usableArea.left}, 0)" bind:this = {yAxisGridLines}/>
+            <g class = "gridlinesX" transform = "translate(0, {usableArea.bottom})" bind:this = {xAxisGridLines}/>
+            <g transform = "translate(0, {usableArea.bottom})" bind:this={xAxis} />
+            <g transform = "translate({usableArea.left}, 0)" bind:this={yAxis} />
+            <g class = "dots">
+                {#each filteredCommits as commit, index (commit.id)}
+                <circle
+                    on:mouseenter = {evt => dotInteraction(index, evt)}
+                    on:mouseleave = {evt => dotInteraction(index, evt)}
+                    on:click = {evt => dotInteraction(index, evt)}
+                    class:selected = {clickedCommits.includes(commit)}
+                    cx = {xScale(commit.datetime)}
+                    cy = {yScale(commit.hourFrac)}
+                    r = {rScale(commit.totalLines)}
+                    fill = "purple"
+                    fill-opacity = "0.5"
+                />
+                {/each}
+            </g>
+        </svg>
+        <Bar data={languageBreakdown} width={width} />
+	</svelte:fragment>
+</Scrolly>
 
 
-<Bar data={languageBreakdown} width={width} />
 
-<svg viewBox = "0 0 {width} {height}">
-    <g class = "gridlines" transform = "translate({usableArea.left}, 0)" bind:this = {yAxisGridLines}/>
-    <g class = "gridlinesX" transform = "translate(0, {usableArea.bottom})" bind:this = {xAxisGridLines}/>
-    <g transform = "translate(0, {usableArea.bottom})" bind:this={xAxis} />
-    <g transform = "translate({usableArea.left}, 0)" bind:this={yAxis} />
-    <g class = "dots">
-        {#each filteredCommits as commit, index (commit.id)}
-        <circle
-            on:mouseenter = {evt => dotInteraction(index, evt)}
-            on:mouseleave = {evt => dotInteraction(index, evt)}
-            on:click = {evt => dotInteraction(index, evt)}
-            class:selected = {clickedCommits.includes(commit)}
-            cx = {xScale(commit.datetime)}
-            cy = {yScale(commit.hourFrac)}
-            r = {rScale(commit.totalLines)}
-            fill = "purple"
-            fill-opacity = "0.5"
-        />
-        {/each}
-    </g>
-</svg>
 
 <dl class = "info tooltip"
     hidden = {hoveredIndex === -1}
@@ -217,14 +246,6 @@ $: {
     <dt>Time</dt>
     <dd>{ hoveredCommit.time }</dd>
 </dl>
-
-<div class="slider-container">
-    <div class="slider">
-        <label for="slider">Show commits until:</label>
-        <input type="range" id="slider" name="slider" min=0 max=100 bind:value={commitProgress}/>
-        <time class="time-label">{commitMaxTime.toLocaleString()}</time>
-    </div>
-</div>
 
 
 
@@ -273,6 +294,7 @@ circle.selected {
 .info dt{
     grid-column:1;
     grid-row:auto;
+    font-weight: bold;
 }
 
 .info dd{

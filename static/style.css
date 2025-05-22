@@ -8,7 +8,7 @@ body {
 	   and use the OS’s UI font as the website font
 	 */
 	font: 100%/1.5 system-ui;
-	max-width: 100ch;
+	max-width: min(120ch, 80vw);
 	margin-inline: auto /*max(1em, (100% - 150ch) / 2)*/;
 	padding: 1ch;
 }
