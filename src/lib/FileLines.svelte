@@ -67,7 +67,7 @@
 
     let svg;
     $: if (svg) {
-        const svgWidth = 1200;
+        const svgWidth = 600;
         const totalHeight = positions.length
             ? positions[positions.length - 1] + filesWithHeights[filesWithHeights.length - 1].groupHeight
             : 0;
@@ -181,5 +181,8 @@
 
 svg {
     margin-top: 10px;
+    border-width: 2px;
+    border-color: red;
+    border-style: solid;
 }
 </style>

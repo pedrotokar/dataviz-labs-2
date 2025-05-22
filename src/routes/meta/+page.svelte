@@ -183,11 +183,28 @@ $: {
     </div>
 </div>
 
-<FileLines dados = {filteredLines} width={width} commitMaxTime = {commitMaxTime}/>
-
 <Stats dados = {dados} commitMaxTime = {commitMaxTime}/>
 
+
 <h2>Sobre os commits</h2>
+
+<Scrolly bind:progress={ commitProgress }>
+    {#each commits.sort(commit => commit.datetime) as commit, index}
+    <p>
+        Em {commit.datetime.toLocaleString("pt-BR", {dateStyle: "full", timeStyle: "short"})},
+        {#if index === 0}
+            meu primeiro commit foi foi feito:
+        {:else}
+            eu fiz outro commit:
+        {/if}
+        <a href="{commit.url}" target="_blank">aqui</a>.
+    </p>
+    {/each}
+	<svelte:fragment slot="viz">
+        <FileLines dados = {filteredLines} width={width} commitMaxTime = {commitMaxTime}/>
+	</svelte:fragment>
+</Scrolly>
+
 
 <Scrolly bind:progress={ commitProgress }>
     {#each commits.sort(commit => commit.datetime) as commit, index}
